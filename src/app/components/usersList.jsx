@@ -8,7 +8,7 @@ import SearchStatus from "./searchStatus";
 import UserTable from "./usersTable";
 import _ from "lodash";
 
-const Users = () => {
+const UsersList = () => {
     const [users, setUsers] = useState();
     const [currentPage, setCurrentPage] = useState(1);
     const [professions, setProfession] = useState();
@@ -59,6 +59,7 @@ const Users = () => {
     const handleSort = (item) => {
         setSortBy(item);
     };
+
     if (users) {
         const filteredUsers = selectedProf
             ? users.filter(
@@ -82,50 +83,52 @@ const Users = () => {
         };
 
         return (
-            <div className="d-flex">
-                {professions && (
-                    <div className="d-flex flex-column flex-shrink-0 p-3">
-                        <GroupList
-                            selectedItem={selectedProf}
-                            items={professions}
-                            onItemSelect={handleProfessionSelect}
-                        />
-                        <button
-                            className="btn btn-secondary mt-2"
-                            onClick={clearFilter}
-                        >
-                            {" "}
-                            Очистить
-                        </button>
-                    </div>
-                )}
-                <div className="d-flex flex-column">
-                    <SearchStatus length={count} />
-                    {count > 0 && (
-                        <UserTable
-                            users={usersCrop}
-                            selectedSort={sortBy}
-                            onDelete={handleDelete}
-                            onToggleBookMark={handleToggleBookMark}
-                            onSort={handleSort}
-                        />
+            <>
+                <div className="d-flex">
+                    {professions && (
+                        <div className="d-flex flex-column flex-shrink-0 p-3">
+                            <GroupList
+                                selectedItem={selectedProf}
+                                items={professions}
+                                onItemSelect={handleProfessionSelect}
+                            />
+                            <button
+                                className="btn btn-secondary mt-2"
+                                onClick={clearFilter}
+                            >
+                                {" "}
+                                Очистить
+                            </button>
+                        </div>
                     )}
-                    <div className="d-flex justify-content-center">
-                        <Pagination
-                            itemsCount={count}
-                            pageSize={pageSize}
-                            currentPage={currentPage}
-                            onPageChange={handlePageChange}
-                        />
+                    <div className="d-flex flex-column">
+                        <SearchStatus length={count} />
+                        {count > 0 && (
+                            <UserTable
+                                users={usersCrop}
+                                selectedSort={sortBy}
+                                onDelete={handleDelete}
+                                onToggleBookMark={handleToggleBookMark}
+                                onSort={handleSort}
+                            />
+                        )}
+                        <div className="d-flex justify-content-center">
+                            <Pagination
+                                itemsCount={count}
+                                pageSize={pageSize}
+                                currentPage={currentPage}
+                                onPageChange={handlePageChange}
+                            />
+                        </div>
                     </div>
                 </div>
-            </div>
+            </>
         );
     }
     return "loading...";
 };
-Users.propTypes = {
+UsersList.propTypes = {
     users: PropTypes.array
 };
 
-export default Users;
+export default UsersList;

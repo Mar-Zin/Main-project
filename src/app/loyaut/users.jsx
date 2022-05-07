@@ -6,8 +6,7 @@ import api from "../api";
 
 const Users = () => {
     const [user, setUser] = useState();
-    const params = useParams();
-    const { userId } = params;
+    const { userId } = useParams();
 
     useEffect(() => {
         api.users.getById(userId).then((data) => setUser(data));

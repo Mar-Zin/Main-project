@@ -18,7 +18,7 @@ const UserCard = ({ user }) => {
                 <h2>
                     <QualitiesList qualities={user.qualities} />
                 </h2>
-                <h3>CompletedMeetings: {user.completedMeetings}</h3>
+                <p>CompletedMeetings: {user.completedMeetings}</p>
                 <h2>Rate: {user.rate}</h2>
                 <button
                     onClick={() => {
@@ -34,7 +34,7 @@ const UserCard = ({ user }) => {
 };
 
 UserCard.propTypes = {
-    user: PropTypes.object
+    user: PropTypes.object.isRequired
 };
 
 export default UserCard;

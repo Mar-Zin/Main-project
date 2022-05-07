@@ -17,6 +17,13 @@ const UsersList = () => {
         path: "name",
         order: "asc"
     });
+    const [search, setSearch] = useState("");
+
+    const handleChange = ({ target }) => {
+        setSearch(target.value);
+        setSelectedProf();
+    };
+    useEffect(() => {}, [search]);
 
     const pageSize = 6;
 
@@ -50,6 +57,7 @@ const UsersList = () => {
 
     const handleProfessionSelect = (item) => {
         setSelectedProf(item);
+        setSearch("");
     };
 
     const handlePageChange = (pageIndex) => {
@@ -61,13 +69,21 @@ const UsersList = () => {
     };
 
     if (users) {
-        const filteredUsers = selectedProf
+        let filteredUsers = selectedProf
             ? users.filter(
                   (user) =>
                       JSON.stringify(user.profession) ===
                       JSON.stringify(selectedProf)
               )
             : users;
+
+        const searchUsers = users.filter((user) => {
+            return user.name.toLowerCase().includes(search.toLowerCase());
+        });
+
+        if (search) {
+            filteredUsers = searchUsers;
+        }
 
         const count = filteredUsers.length;
 
@@ -78,6 +94,7 @@ const UsersList = () => {
         );
 
         const usersCrop = paginate(sotredUsers, currentPage, pageSize);
+
         const clearFilter = () => {
             setSelectedProf();
         };
@@ -96,13 +113,21 @@ const UsersList = () => {
                                 className="btn btn-secondary mt-2"
                                 onClick={clearFilter}
                             >
-                                {" "}
                                 Очистить
                             </button>
                         </div>
                     )}
                     <div className="d-flex flex-column">
                         <SearchStatus length={count} />
+                        <form>
+                            <input
+                                type="text"
+                                placeholder="Search..."
+                                className="w-100"
+                                value={search}
+                                onChange={handleChange}
+                            />
+                        </form>
                         {count > 0 && (
                             <UserTable
                                 users={usersCrop}

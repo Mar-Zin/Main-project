@@ -1,18 +1,24 @@
-import React, { useState, useEffect } from "react";
-import UsersList from "../components/usersList";
-import UserCard from "../components/userCard";
+import React from "react";
+import UsersListPage from "../components/page/usersListPage";
+import UserPage from "../components/page/userPage";
 import { useParams } from "react-router-dom";
-import api from "../api";
+import EditUserPage from "../components/page/editUserPage/editUserPage";
 
 const Users = () => {
-    const [user, setUser] = useState();
     const { userId } = useParams();
+    const { edit } = useParams();
 
-    useEffect(() => {
-        api.users.getById(userId).then((data) => setUser(data));
-    });
-
-    return <>{userId ? <UserCard user={user} /> : <UsersList />}</>;
+    return (
+        <>
+            {userId && edit === "edit" ? (
+                <EditUserPage userId={userId} />
+            ) : userId ? (
+                <UserPage userId={userId} />
+            ) : (
+                <UsersListPage />
+            )}
+        </>
+    );
 };
 
 export default Users;

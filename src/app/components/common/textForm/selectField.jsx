@@ -31,7 +31,7 @@ const SelectField = ({
             <select
                 className={getInputClasses()}
                 id={name}
-                name="profession"
+                name={name}
                 value={value}
                 onChange={handleChange}
             >

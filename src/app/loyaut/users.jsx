@@ -10,8 +10,8 @@ const Users = () => {
 
     return (
         <>
-            {userId && edit === "edit" ? (
-                <EditUserPage userId={userId} />
+            {userId && edit ? (
+                <EditUserPage />
             ) : userId ? (
                 <UserPage userId={userId} />
             ) : (

@@ -7,34 +7,28 @@ import SelectField from "../../common/textForm/selectField";
 import RadioField from "../../common/textForm/radioField";
 import MultiSelectField from "../../common/textForm/multiSelectField";
 import { useHistory } from "react-router-dom";
+import { useParams } from "react-router-dom/cjs/react-router-dom.min";
+import BackHistoryButton from "../../common/backButton";
 
-const EditUserPage = ({ userId }) => {
+const EditUserPage = () => {
+    const { userId } = useParams();
     const history = useHistory();
-    useEffect(() => {
-        api.users.getById(userId).then((data) =>
-            setData({
-                completedMeetings: 434,
-                rate: 5,
-                bookmark: false,
-                _id: data._id,
-                email: data.email,
-                name: data.name,
-                profession: data.profession._id,
-                sex: data.sex,
-                qualities: data.qualities.map((qualiti) => ({
-                    value: qualiti._id,
-                    label: qualiti.name,
-                    color: qualiti.color
-                }))
-            })
-        );
-    }, []);
 
-    const [data, setData] = useState();
-    console.log(data);
+    const [data, setData] = useState({
+        email: "",
+        password: "",
+        profession: "",
+        sex: "male",
+        qualities: []
+    });
+    const [isLoading, setIsLoading] = useState(false);
     const [qualities, setQualities] = useState([]);
     const [professions, setProfession] = useState([]);
     const [errors, setErrors] = useState({});
+
+    const transformData = (data) => {
+        return data.map((qual) => ({ label: qual.name, value: qual._id }));
+    };
 
     const getProfessionById = (id) => {
         for (const prof of professions) {
@@ -60,6 +54,15 @@ const EditUserPage = ({ userId }) => {
     };
 
     useEffect(() => {
+        setIsLoading(true);
+        api.users.getById(userId).then(({ profession, qualities, ...data }) =>
+            setData((prevState) => ({
+                ...prevState,
+                ...data,
+                qualities: transformData(qualities),
+                profession: profession._id
+            }))
+        );
         api.professions.fetchAll().then((data) => {
             const professionsList = Object.keys(data).map((professionName) => ({
                 label: data[professionName].name,
@@ -76,6 +79,10 @@ const EditUserPage = ({ userId }) => {
             setQualities(qualitiesList);
         });
     }, []);
+
+    useEffect(() => {
+        if (data._id) setIsLoading(false);
+    }, [data]);
 
     const handleChange = (target) => {
         setData((prevState) => ({
@@ -104,18 +111,17 @@ const EditUserPage = ({ userId }) => {
             }
         }
     };
+
     useEffect(() => {
         validate();
     }, [data]);
+
     const validate = () => {
         const errors = validator(data, validatorConfig);
         setErrors(errors);
         return Object.keys(errors).length === 0;
     };
     const isValid = Object.keys(errors).length === 0;
-    const handleBack = () => {
-        history.push(`/users/${data._id}`);
-    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -123,13 +129,13 @@ const EditUserPage = ({ userId }) => {
         if (!isValid) return;
         const { profession, qualities } = data;
         api.users
-            .update(data._id, {
+            .update(userId, {
                 ...data,
                 profession: getProfessionById(profession),
                 qualities: getQualities(qualities)
             })
-            .then((data) => console.log(data));
-        handleBack();
+            .then((user) => history.push(`/users/${user._id}`));
+
         console.log({
             ...data,
             profession: getProfessionById(profession),
@@ -138,9 +144,10 @@ const EditUserPage = ({ userId }) => {
     };
     return (
         <div className="container mt-5">
+            <BackHistoryButton />
             <div className="row">
                 <div className="col-md-6 offset-md-3 shadow p-4">
-                    {data ? (
+                    {!isLoading && Object.keys(professions).length > 0 ? (
                         <form onSubmit={handleSubmit}>
                             <TextField
                                 label="Имя"

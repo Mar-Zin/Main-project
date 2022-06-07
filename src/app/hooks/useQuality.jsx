@@ -10,7 +10,7 @@ export const useQuality = () => {
 };
 
 export const QualityProvider = ({ children }) => {
-    const [quality, setQualities] = useState([]);
+    const [qualities, setQualities] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -30,7 +30,7 @@ export const QualityProvider = ({ children }) => {
     }
 
     function getQuality(id) {
-        return quality.find((q) => q._id === id);
+        return qualities.find((q) => q._id === id);
     }
 
     useEffect(() => {
@@ -45,7 +45,7 @@ export const QualityProvider = ({ children }) => {
     }, [error]);
 
     return (
-        <QualityContext.Provider value={{ isLoading, quality, getQuality }}>
+        <QualityContext.Provider value={{ isLoading, getQuality }}>
             {children}
         </QualityContext.Provider>
     );

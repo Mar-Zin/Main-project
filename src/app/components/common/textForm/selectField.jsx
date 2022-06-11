@@ -10,18 +10,17 @@ const SelectField = ({
     error,
     name
 }) => {
+    const handleChange = ({ target }) => {
+        onChange({ name: target.name, value: target.value });
+    };
+    const getInputClasses = () => {
+        return "form-select" + (error ? " is-invalid" : "");
+    };
+
     const optionsArray =
         !Array.isArray(options) && typeof options === "object"
             ? Object.values(options)
             : options;
-
-    const handleChange = ({ target }) => {
-        onChange({ name: target.name, value: target.value });
-    };
-
-    const getInputClasses = () => {
-        return "form-select" + (error ? " is-invalid" : "");
-    };
 
     return (
         <div className="mb-4">
@@ -38,9 +37,9 @@ const SelectField = ({
                 <option disabled value="">
                     {defaultOption}
                 </option>
-                {optionsArray &&
+                {optionsArray.length > 0 &&
                     optionsArray.map((option) => (
-                        <option key={option.value} value={option.value}>
+                        <option value={option.value} key={option.value}>
                             {option.label}
                         </option>
                     ))}
@@ -51,8 +50,8 @@ const SelectField = ({
 };
 
 SelectField.propTypes = {
-    label: PropTypes.string,
     defaultOption: PropTypes.string,
+    label: PropTypes.string,
     value: PropTypes.string,
     onChange: PropTypes.func,
     error: PropTypes.string,

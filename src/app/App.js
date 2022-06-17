@@ -9,29 +9,30 @@ import "react-toastify/dist/ReactToastify.css";
 import { ProfessionProvider } from "./hooks/useProfession";
 import { QualityProvider } from "./hooks/useQuality";
 import AuthProvider from "./hooks/useAuth";
-import LoginProvider from "./hooks/useLogin";
+import LogOut from "./loyaut/logOut";
+import ProtectedRoute from "./components/common/protectedRoute";
 
 function App() {
     return (
         <>
-            <LoginProvider>
-                <AuthProvider>
-                    <NavBar />
-                    <QualityProvider>
-                        <ProfessionProvider>
-                            <Switch>
-                                <Route path="/" exact component={Main} />
-                                <Route path="/login/:type?" component={Login} />
-                                <Route
-                                    path="/users/:userId?/:edit?"
-                                    component={Users}
-                                />
-                                <Redirect to="/" />
-                            </Switch>
-                        </ProfessionProvider>
-                    </QualityProvider>
-                </AuthProvider>
-            </LoginProvider>
+            <AuthProvider>
+                <NavBar />
+                <QualityProvider>
+                    <ProfessionProvider>
+                        <Switch>
+                            <Route path="/" exact component={Main} />
+                            <Route path="/login/:type?" component={Login} />
+                            <ProtectedRoute
+                                path="/users/:userId?/:edit?"
+                                component={Users}
+                            />
+                            <Route path="/logout" component={LogOut} />
+                            <Redirect to="/" />
+                        </Switch>
+                    </ProfessionProvider>
+                </QualityProvider>
+            </AuthProvider>
+
             <ToastContainer />
         </>
     );

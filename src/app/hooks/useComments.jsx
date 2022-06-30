@@ -1,10 +1,12 @@
 import React, { useContext, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { useParams } from "react-router-dom";
-import { useAuth } from "./useAuth";
-import { nanoid } from "nanoid";
+// import { nanoid } from "nanoid";
 import commentService from "../services/comment.service";
 import { toast } from "react-toastify";
+import { useSelector, useDispatch } from "react-redux";
+import { getCurrentUserId } from "../store/users";
+import { createComment } from "../store/comments";
 
 const CommentsContext = React.createContext();
 export const useComments = () => {
@@ -13,7 +15,8 @@ export const useComments = () => {
 
 export const CommentsProvider = ({ children }) => {
     const { userId } = useParams();
-    const { currentUser } = useAuth();
+    const currentUserId = useSelector(getCurrentUserId());
+    const dispatch = useDispatch();
     const [comments, setComments] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -27,20 +30,21 @@ export const CommentsProvider = ({ children }) => {
         setError(message);
     }
 
-    async function createComment(data) {
-        const comment = {
-            ...data,
-            pageId: userId,
-            created_at: `${Date.now()}`,
-            userId: currentUser._id,
-            _id: nanoid()
-        };
-        try {
-            const { content } = await commentService.createComment(comment);
-            setComments((prevState) => [...prevState, content]);
-        } catch (error) {
-            catchError(error);
-        }
+    function createdComment(data) {
+        dispatch(createComment({ data, userId, currentUserId }));
+        // const comment = {
+        //     ...data,
+        //     pageId: userId,
+        //     created_at: `${Date.now()}`,
+        //     userId: currentUserId,
+        //     _id: nanoid()
+        // };
+        // try {
+        //     const { content } = await commentService.createComment(comment);
+        //     setComments((prevState) => [...prevState, content]);
+        // } catch (error) {
+        //     catchError(error);
+        // }
     }
 
     async function getComments() {
@@ -74,7 +78,7 @@ export const CommentsProvider = ({ children }) => {
 
     return (
         <CommentsContext.Provider
-            value={{ comments, createComment, isLoading, removeComment }}
+            value={{ comments, createdComment, isLoading, removeComment }}
         >
             {children}
         </CommentsContext.Provider>

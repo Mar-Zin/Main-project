@@ -2,26 +2,26 @@ import React, { useEffect, useState } from "react";
 import { validator } from "../../utils/validator";
 import TextField from "../common/textForm/textField";
 import CheckBoxField from "../common/textForm/checkBoxField";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
-import { useAuth } from "../../hooks/useAuth";
+import { useDispatch, useSelector } from "react-redux";
+import { getAuthError, logIn } from "../../store/users";
+import { useHistory } from "react-router-dom";
 
 const LoginForm = () => {
     const history = useHistory();
+    const dispatch = useDispatch();
+    const loginError = useSelector(getAuthError());
     const [data, setData] = useState({
         email: "",
         password: "",
         stayOn: false
     });
     const [errors, setErrors] = useState({});
-    const [enterError, setEnterError] = useState(null);
-    const { logIn } = useAuth();
 
     const handleChange = (target) => {
         setData((prevState) => ({
             ...prevState,
             [target.name]: target.value
         }));
-        setEnterError(null);
     };
 
     const validatorConfig = {
@@ -64,22 +64,11 @@ const LoginForm = () => {
         event.preventDefault();
         const isValid = validate();
         if (!isValid) return;
-        try {
-            await logIn(data);
-            alert(
-                `Давно не виделись! Рад тебя видеть, ${data.email.slice(
-                    0,
-                    data.email.indexOf("@")
-                )}`
-            );
-            history.push(
-                history.location.state
-                    ? history.location.state.from.pathname
-                    : "/"
-            );
-        } catch (error) {
-            setEnterError(error.message);
-        }
+
+        const redirect = history.location.state
+            ? history.location.state.from.pathname
+            : "/";
+        dispatch(logIn({ payload: data, redirect }));
     };
     return (
         <form onSubmit={handleSubmit}>
@@ -105,9 +94,9 @@ const LoginForm = () => {
             >
                 Оставаться в системе
             </CheckBoxField>
-            {enterError && <p className="text-danger">{enterError}</p>}
+            {loginError && <p className="text-danger">{loginError}</p>}
             <button
-                disabled={!isValid || enterError}
+                disabled={!isValid}
                 className="btn btn-primary w-100 mx-auto"
             >
                 Отправить форму

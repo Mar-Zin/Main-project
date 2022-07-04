@@ -16,11 +16,18 @@ const NavBar = () => {
                         </Link>
                     </li>
                     {isLoggedId && (
-                        <li className="nav-item">
-                            <Link className="nav-link active" to="/users">
-                                Users
-                            </Link>
-                        </li>
+                        <>
+                            <li className="nav-item">
+                                <Link className="nav-link active" to="/users">
+                                    Users
+                                </Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link className="nav-link" to="/favorites">
+                                    My favorites
+                                </Link>
+                            </li>
+                        </>
                     )}
                 </ul>
                 <div className="d-flex">

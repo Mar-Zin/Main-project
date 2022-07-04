@@ -100,7 +100,8 @@ const RegisterForm = () => {
         if (!isValid) return;
         const newData = {
             ...data,
-            qualities: data.qualities.map((q) => q.value)
+            qualities: data.qualities.map((q) => q.value),
+            bookmark: []
         };
         dispatch(signUp(newData));
     };

@@ -9,6 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 import LogOut from "./loyaut/logOut";
 import ProtectedRoute from "./components/common/protectedRoute";
 import AppLoader from "./components/ui/hoc/appLoader";
+import Favorites from "./loyaut/favorites";
 
 function App() {
     return (
@@ -22,6 +23,7 @@ function App() {
                         path="/users/:userId?/:edit?"
                         component={Users}
                     />
+                    <ProtectedRoute path="/favorites" component={Favorites} />
                     <Route path="/logout" component={LogOut} />
                     <Redirect to="/" />
                 </Switch>

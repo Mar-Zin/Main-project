@@ -5,6 +5,8 @@ import Qualities from "./qualities";
 import Table from "../common/table";
 import { Link } from "react-router-dom";
 import Profession from "./profession";
+import { toggleBookmark } from "../../store/users";
+import { useDispatch } from "react-redux";
 
 const UserTable = ({
     users,
@@ -13,6 +15,7 @@ const UserTable = ({
     onToggleBookMark,
     ...rest
 }) => {
+    const dispatch = useDispatch();
     const columns = {
         name: {
             path: "name",
@@ -39,8 +42,8 @@ const UserTable = ({
             name: "Избранное",
             component: (user) => (
                 <BookMark
-                    status={user.bookmark}
-                    onClick={() => onToggleBookMark(user._id)}
+                    user={user}
+                    onClick={() => dispatch(toggleBookmark(user._id))}
                 />
             )
         }

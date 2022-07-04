@@ -161,10 +161,11 @@ export const updateUserData = (payload) => async (dispatch) => {
     dispatch(updateUserRequested());
     try {
         const { content } = await userService.update(payload);
+        console.log(payload);
         dispatch(userDataUpdated(content));
         history.push(`/users/${content._id}`);
     } catch (error) {
-        dispatch(userDataUpdatedFailed());
+        dispatch(userDataUpdatedFailed(error.message));
     }
 };
 
@@ -175,6 +176,30 @@ export const loadUsersList = () => async (dispatch) => {
         dispatch(usersReceved(content));
     } catch (error) {
         dispatch(usersRequestFailed(error.message));
+    }
+};
+
+export const toggleBookmark = (id) => async (dispatch, getState) => {
+    dispatch(updateUserRequested());
+    let bookmarks;
+    if (!getCurrentUserData()(getState()).bookmark) {
+        bookmarks = [];
+        bookmarks.push(id);
+    } else {
+        bookmarks = [...getCurrentUserData()(getState()).bookmark];
+        if (bookmarks.findIndex((_id) => _id === id) !== -1) {
+            bookmarks = bookmarks.filter((_id) => _id !== id);
+        } else bookmarks.push(id);
+    }
+    const payload = {
+        ...getCurrentUserData()(getState()),
+        bookmark: bookmarks
+    };
+    try {
+        const { content } = await userService.update(payload);
+        dispatch(userDataUpdated(content));
+    } catch (error) {
+        dispatch(userDataUpdatedFailed(error.message));
     }
 };
 
